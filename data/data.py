@@ -1,17 +1,22 @@
+from datetime import datetime
 import json
+import time
 from google.cloud import bigquery
 from google.oauth2 import service_account
 
+# -------------
 # Links:
 # https://medium.com/google-cloud/full-relational-diagram-for-ethereum-public-data-on-google-bigquery-2825fdf0fb0b
+# -------------
 
-# ----------------------------------------------------------------
+# =================================================================
 # USER SETTINGS
-# ----------------------------------------------------------------
+# =================================================================
 pool_address = "0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640"
-key_path = "../molten-precinct-370900-13a790fde100.json" # TODO(developer): use the key to the service account
+key_path = "molten-precinct-370900-13a790fde100.json" # TODO(developer): use the key to the service account
+filename = f"ethereum-query-{datetime.now()}.csv".replace(" ", "_")
 
-# ----------------------------------------------------------------
+# =================================================================
 credentials = service_account.Credentials.from_service_account_file(
     key_path, scopes=["https://www.googleapis.com/auth/cloud-platform"],
 )
@@ -42,10 +47,19 @@ QUERY = (
 "ORDER BY "
   "block_timestamp ASC, transaction_index "
 )
+print("🟢 begin query...")
 query_job = client.query(QUERY)  # API request
-rows = query_job.result()  # Waits for query to finish
 
-# now let's store in the GC bucket
+while query_job.state != "DONE":
+    print("  ⏲️ querying...")
+    query_job.reload()
+    time.sleep(4)
 
-for row in rows:
-    print(f"{row.address} - {row.block_number}")
+if query_job.state == "DONE":
+    print("✅ Query job is done. ✍ Exporting to csv...")
+    df = query_job.to_dataframe()
+    df.to_csv(filename, index=False)
+else:
+    raise Exception("🔴 Query job did not complete!")
+
+print("ALL DONE!")
