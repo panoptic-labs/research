@@ -4,10 +4,10 @@ import time
 from google.cloud import bigquery
 from google.oauth2 import service_account
 
-# -------------
+# =================================================================
 # Links:
 # https://medium.com/google-cloud/full-relational-diagram-for-ethereum-public-data-on-google-bigquery-2825fdf0fb0b
-# -------------
+# =================================================================
 
 # =================================================================
 # USER SETTINGS
