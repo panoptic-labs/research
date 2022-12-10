@@ -1,6 +1,6 @@
 """
 DataHandler for storing and loading pool data.
-@author: Jesper Kristensen, Panoptic.xyz
+@author: Jesper Kristensen, Axicon Labs Inc.
 """
 import datetime
 import os
@@ -61,7 +61,7 @@ class DataHandler(object):
                 print(f"                    >>> Forcing a re-download! <<<                                   ")
                 print(f"                                                                                     ")
                 print("⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠⚠")
-                
+
                 return self.download(pool_address=pool_address, all=True, force=True)
 
             return pd.read_csv(filepath)

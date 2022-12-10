@@ -3,6 +3,8 @@ Sync data to local disk.
 
 Use with `force=True` to force a re-download of all data in the BigQuery Table.
 When `force=False` the data is not download if it exists under the data path (default: `./data/data.csv`)
+
+@author Axicon Labs Inc.
 """
 from research import DataHandler
 
