@@ -10,6 +10,3 @@ from research import DataHandler
 
 dh = DataHandler()
 df = dh.download(pool_address="0x82c427adfdf2d245ec51d8046b41c4ee87f0d29c", all=True, force=False)
-
-# now do whatever with df...
-print(df)

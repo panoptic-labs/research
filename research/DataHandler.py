@@ -44,7 +44,7 @@ class DataHandler(object):
     def download(self, pool_address=None, all=False, force=False):
         assert(pool_address is not None)
 
-        filepath = (self._filePath / pool_address).with_suffix(".csv")
+        filepath = self._getFilepath(pool_address=pool_address)
 
         if filepath.exists() and not force:
             print("🐇 Local data found on disk! Returning cached data. Call with `force=True` to re-download all data to disk again!")
@@ -72,8 +72,15 @@ class DataHandler(object):
         return df
 
     """View functions"""
-    def getData(self):
-        return pd.read_csv(self.path())
+    def _getFilepath(self, pool_address=None):
+        return (self._filePath / pool_address).with_suffix(".csv")
+
+    def getData(self, pool_address=None):
+        filepath = self._getFilepath(pool_address)
+        if not filepath.exists():
+            self.download(pool_address=pool_address, all=True)
+        
+        return pd.read_csv(filepath)
 
     def path(self):
         return self._path
