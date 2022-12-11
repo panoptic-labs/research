@@ -3,6 +3,7 @@ DataHandler for storing and loading pool data.
 @author: Jesper Kristensen, Axicon Labs Inc.
 """
 import datetime
+import json
 import os
 from pathlib import Path
 import pandas as pd
@@ -24,6 +25,8 @@ class DataHandler(object):
     _latest_block_public = None
     _latest_timestamp_public = None
     _latest_block_local = None
+    _poolContracts = None # map pool address to pool contract
+    _tokenContracts = None # map token address to token contract
 
     def __init__(self, datafolder=".data/"):
         self._filePath = Path(datafolder)
@@ -38,7 +41,7 @@ class DataHandler(object):
         self._latest_timestamp_public = datetime.datetime.fromtimestamp(self._w3.eth.getBlock(self._w3.eth.block_number).timestamp)
         print(f"🔗 Latest block on the public blockchain: {self._latest_block_public} (public chain most recent timestamp: {self._latest_timestamp_public})")
 
-        # self._uniswap = Uniswap(address=None, private_key=None, version=3, provider=f"https://eth-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_API_KEY')}")
+        self._uniswap = Uniswap(address=None, private_key=None, version=3, provider=f"https://eth-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_API_KEY')}")
         
     """Download data from Google BigQuery Table"""
     def download(self, pool_address=None, all=False, force=False):
@@ -84,3 +87,74 @@ class DataHandler(object):
 
     def path(self):
         return self._path
+
+    def getUniswapPoolAddress(self, token0address=None, token1address=None, fee=None):
+        return self._uniswap.get_pool_instance(token0address, token1address, fee)
+
+    """
+    Returns
+    poolContract.factory(),
+    poolContract.token0(),
+    poolContract.token1(),
+    poolContract.fee(),
+    poolContract.tickSpacing(),
+    poolContract.maxLiquidityPerTick(),
+    """
+    def getPoolInfo(self, pool_address=None):
+        # create pool contract
+        poolContract = self._getPoolContract(pool_address)
+        return self._uniswap.get_pool_immutables(poolContract)
+    
+    def getPoolContract(self, pool_address=None):
+        return self._getPoolContract(pool_address=pool_address)
+    
+    def getToken0(self, pool_address=None):
+        tokenAddress = self.getPoolInfo(pool_address=pool_address)["token0"]
+        return self._uniswap.get_token(tokenAddress)
+    
+    def getToken1(self, pool_address=None):
+        tokenAddress = self.getPoolInfo(pool_address=pool_address)["token1"]
+        return self._uniswap.get_token(tokenAddress)
+    
+    def _checkSum(self, pool_address=None):
+        return Web3.toChecksumAddress(pool_address)
+
+    def _getTokenContract(self, token_address=None):
+        # cache the token contract:
+        if self._tokenContracts is not None and token_address in self._tokenContracts and self._tokenContracts[token_address] is not None:
+            return self._tokenContracts[token_address]
+        
+        # load the abi:
+        with open("research/aux/uniswapTokenABI.json", "r") as f:
+            abi = json.load(f)["abi"]
+        
+        tokenContract = self._w3.eth.contract(
+            address=self._checkSum(token_address),
+            abi=abi
+        )
+        if self._tokenContracts is None:
+            self._tokenContracts = dict()
+        
+        self._tokenContracts[token_address] = tokenContract
+
+        return tokenContract
+
+    def _getPoolContract(self, pool_address=None):
+        # cache the pool contract:
+        if self._poolContracts is not None and pool_address in self._poolContracts and self._poolContracts[pool_address] is not None:
+            return self._poolContracts[pool_address]
+        
+        # load the abi:
+        with open("research/aux/uniswapPoolABI.json", "r") as f:
+            abi = json.load(f)["abi"]
+        
+        poolContract = self._w3.eth.contract(
+            address=self._checkSum(pool_address),
+            abi=abi
+        )
+        if self._poolContracts is None:
+            self._poolContracts = dict()
+        
+        self._poolContracts[pool_address] = poolContract
+
+        return poolContract
