@@ -108,6 +108,12 @@ class DataHandler(object):
     def getPoolContract(self, pool_address=None):
         return self._getPoolContract(pool_address=pool_address)
     
+    """
+    Return the pool contract given the tokens and the fee.
+    """
+    def getPool(self, token0_address=None, token1_address=None, fee=None):
+        return self._uniswap.get_pool_instance(token0_address, token1_address, fee)
+    
     def getToken0(self, pool_address=None):
         tokenAddress = self.getPoolInfo(pool_address=pool_address)["token0"]
         return self._uniswap.get_token(tokenAddress)
