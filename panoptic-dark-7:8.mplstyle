@@ -1,0 +1,106 @@
+# default seaborn aesthetic
+# darkgrid + deep palette + notebook context
+
+axes.axisbelow: True
+axes.edgecolor: 0.5
+axes.facecolor: 0A0119
+axes.grid: True
+axes.grid.axis: both 
+axes.grid.which: major
+axes.labelcolor: .95
+axes.labelsize: 6
+axes.labelweight : light
+axes.labelpad: 3.0 
+axes.linewidth: 0.5
+axes.prop_cycle: cycler('color', ['5F18E2', '189CE2', 'E2189C', 'E5E5E5', '18E25C'])
+#axes.prop_cycle: cycler('color', ['9C72E5', '72BBE5', 'E572BB', 'E5E5E5', '72E59A'])
+axes.titlesize: 7
+axes.spines.left: False  ## display axis spines
+axes.spines.bottom: True
+axes.spines.top: False
+axes.spines.right: True
+#axes.autolimit_mode: round_numbers
+
+#figure.facecolor: 0.1
+figure.facecolor: 19161E
+figure.figsize: 3.2, 2.8  # 7:8, 1200x1050
+figure.dpi         : 375
+figure.constrained_layout.w_pad:  0.2 
+figure.constrained_layout.h_pad:  0.2
+figure.constrained_layout.use: True
+figure.subplot.left:   0.1
+figure.subplot.right:  0.9
+figure.subplot.wspace: 0.2
+figure.subplot.hspace: 0.2
+
+font.family: sans-serif
+font.sans-serif: Helvetica Neue, HelveticaNeue, Arial, Liberation Sans, DejaVu Sans, Bitstream Vera Sans, sans-serif
+font.weight  : light
+
+grid.color: 0.25
+grid.linestyle: -
+grid.linewidth: 0.375
+
+image.cmap: BuPu
+
+legend.loc: best
+legend.fontsize: 5
+legend.frameon: True
+legend.borderpad: 0.25
+legend.edgecolor: 0.75
+legend.facecolor: inherit
+legend.labelspacing: 0.25
+legend.numpoints: 1
+legend.scatterpoints: 1
+legend.framealpha: 1
+legend.fancybox: True 
+
+lines.linewidth: 0.5
+lines.markeredgewidth: 0.25
+lines.marker          : None
+lines.markersize: 2
+lines.solid_capstyle: round
+lines.solid_joinstyle: round
+lines.dash_joinstyle: round
+lines.dash_capstyle: round
+lines.dashed_pattern : 3.7, 1.6
+
+patch.facecolor: 6E4EAF
+patch.linewidth: .3
+
+text.color: .95
+
+xtick.top           : False  ## draw ticks on the top side
+xtick.bottom        : True
+xtick.labeltop      : False   ## draw label on the top
+xtick.labelbottom   : True    ## draw label on the bottom
+xtick.color: .95
+xtick.direction: out
+xtick.labelsize: 4
+xtick.major.pad: 3
+xtick.major.size: 0
+xtick.major.width: 0
+xtick.minor.size: 0
+xtick.minor.width: 0
+
+#xaxis.labellocation: right  # alignment of the xaxis label: {left, right, center}
+#yaxis.labellocation: center  # alignment of the yaxis label: {bottom, top, center}
+
+ytick.left          : True    ## draw ticks on the left side
+ytick.right         : True   ## draw ticks on the right side
+ytick.labelleft     : True    ## draw tick labels on the left side
+ytick.labelright    : True   ## draw tick labels on the right side
+ytick.color: .95
+ytick.direction: in
+ytick.labelsize: 4
+ytick.major.pad: 0
+ytick.major.size: 0
+ytick.major.width: 0
+ytick.minor.size: 0
+ytick.minor.width: 0
+
+errorbar.capsize : 0.25  ## length of end cap on error bars in pixels
+
+path.simplify : True
+
+svg.fonttype : none
