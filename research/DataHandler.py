@@ -122,6 +122,9 @@ class DataHandler(object):
         tokenAddress = self.getPoolInfo(pool_address=pool_address)["token1"]
         return self._uniswap.get_token(tokenAddress)
     
+    def getFee(self, pool_address=None):
+        return self.getPoolInfo(pool_address=pool_address)["fee"]
+    
     def _checkSum(self, pool_address=None):
         return Web3.toChecksumAddress(pool_address)
 
