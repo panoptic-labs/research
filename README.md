@@ -29,6 +29,14 @@ Then install all existing Python packages with:
 > panoptic-research/bin/pip install -r requirements.txt
 ```
 
+## Installing Fonts
+
+Install the HelveticaNeue fonts with:
+
+```shell
+panoptic-research/bin/python3.10 installFonts.py
+```
+
 ## Installing New Packages
 
 Install new packages with:
