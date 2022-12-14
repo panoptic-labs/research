@@ -66,7 +66,7 @@ class BackTester(object):
         # TODO let's compute the fees within range
         # each line in the DF is a swap... if it happened within our tick range we collect fees (amount of pool fee on the input token!)...
         Nticks=len(chunk)
-        ticks=list(df['tick'])
+        ticks=list(chunk['tick'])
         
         
         tick_upper=posDetails['tick_upper']
