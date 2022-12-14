@@ -69,7 +69,9 @@ class DataHandler(object):
 
             return pd.read_csv(filepath)
         
-        df = pd.read_gbq(f"SELECT * FROM `arcane-world-371019.First_sync.1` WHERE address='{pool_address}' {'' if all else 'LIMIT 1000'}", project_id="arcane-world-371019", progress_bar_type='tqdm')
+        df = pd.read_gbq(f"SELECT DISTINCT * FROM `arcane-world-371019.First_sync.1` WHERE address='{pool_address}' {'' if all else 'LIMIT 1000'}",
+            project_id="arcane-world-371019",
+            progress_bar_type='tqdm')
         df.to_csv(filepath, index=False)
         print(f"✍ Data written to: {filepath}")
         return df
@@ -107,6 +109,32 @@ class DataHandler(object):
     
     def getPoolContract(self, pool_address=None):
         return self._getPoolContract(pool_address=pool_address)
+
+    def tradeToken0(self, pool_address=None, token0amount=None):
+        token0 = self.getToken0(pool_address=pool_address).address
+        token1 = self.getToken1(pool_address=pool_address).address
+        fee = self.getFee(pool_address=pool_address)
+        # gets the (max) token1 amount corresponding to the token0 amount:
+        return self._uniswap.get_price_input(
+            token0=token0,
+            token1=token1,
+            qty=token0amount,
+            fee=fee,
+            route=None
+        )
+    
+    def tradeToken1(self, pool_address=None, token1amount=None):
+        token0 = self.getToken0(pool_address=pool_address).address
+        token1 = self.getToken1(pool_address=pool_address).address
+        fee = self.getFee(pool_address=pool_address)
+        # gets the (max) token1 amount corresponding to the token0 amount:
+        return self._uniswap.get_price_output(
+            token0=token0,
+            token1=token1,
+            qty=token1amount,
+            fee=fee,
+            route=None
+        )
     
     """
     Return the pool contract given the tokens and the fee.
