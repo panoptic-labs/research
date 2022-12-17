@@ -6,7 +6,7 @@ The implementation used is based on the following libraries:
 - pandas
 - tqdm 
 
-It also requires Guillaume's matplotlib configuration files and fonts.
+It also requires Guillaume's matplotlib configuration files and fonts and relies upon having the data filed stored in a folder data (`mkdir data`)
 Everything can be run from the juopyer notebook attached. 
 
 This can also be converted into code by using the command 
