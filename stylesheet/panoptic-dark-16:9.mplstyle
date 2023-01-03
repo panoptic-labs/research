@@ -8,11 +8,12 @@ axes.grid: True
 axes.grid.axis: both 
 axes.grid.which: major
 axes.labelcolor: .95
-axes.labelsize: 6
-axes.labelweight : light
-axes.labelpad: 3.0 
-axes.linewidth: 0.5
-axes.prop_cycle: cycler('color', ['5F18E2', '189CE2', 'E2189C', 'E5E5E5', '18E25C'])
+axes.labelsize: 7
+axes.labelweight : medium
+axes.labelpad: 6.0 
+axes.linewidth: 1.25
+axes.prop_cycle: cycler('color', ['814df3', 'ae4660', 'f305f9', 'ffac6e', 'f8d120','c9ccff'])
+#axes.prop_cycle: cycler('color', ['5F18E2', '189CE2', 'E2189C', 'E5E5E5', '18E25C'])
 #axes.prop_cycle: cycler('color', ['9C72E5', '72BBE5', 'E572BB', 'E5E5E5', '72E59A'])
 axes.titlesize: 7
 axes.spines.left: False  ## display axis spines
@@ -35,11 +36,11 @@ figure.subplot.hspace: 0.2
 
 font.family: sans-serif
 font.sans-serif: Helvetica Neue, HelveticaNeue, Arial, Liberation Sans, DejaVu Sans, Bitstream Vera Sans, sans-serif
-font.weight  : light
+font.weight  : medium
 
 grid.color: 0.25
 grid.linestyle: -
-grid.linewidth: 0.375
+grid.linewidth: 0.5
 
 image.cmap: BuPu
 
@@ -76,7 +77,7 @@ xtick.labeltop      : False   ## draw label on the top
 xtick.labelbottom   : True    ## draw label on the bottom
 xtick.color: .95
 xtick.direction: out
-xtick.labelsize: 4
+xtick.labelsize: 6
 xtick.major.pad: 3
 xtick.major.size: 0
 xtick.major.width: 0
@@ -86,14 +87,14 @@ xtick.minor.width: 0
 #xaxis.labellocation: right  # alignment of the xaxis label: {left, right, center}
 #yaxis.labellocation: center  # alignment of the yaxis label: {bottom, top, center}
 
-ytick.left          : True    ## draw ticks on the left side
+ytick.left          : False    ## draw ticks on the left side
 ytick.right         : True   ## draw ticks on the right side
-ytick.labelleft     : True    ## draw tick labels on the left side
+ytick.labelleft     : False    ## draw tick labels on the left side
 ytick.labelright    : True   ## draw tick labels on the right side
 ytick.color: .95
 ytick.direction: in
-ytick.labelsize: 4
-ytick.major.pad: 0
+ytick.labelsize: 6
+ytick.major.pad: 3
 ytick.major.size: 0
 ytick.major.width: 0
 ytick.minor.size: 0
