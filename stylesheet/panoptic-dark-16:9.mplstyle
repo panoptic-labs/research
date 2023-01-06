@@ -12,7 +12,7 @@ axes.labelsize: 7
 axes.labelweight : medium
 axes.labelpad: 6.0 
 axes.linewidth: 1.25
-axes.prop_cycle: cycler('color', ['814df3', 'ae4660', 'f305f9', 'ffac6e', 'f8d120','c9ccff'])
+axes.prop_cycle: cycler('color', ['6c74f5', '7ceac5', 'f305f9', 'ffac6e', 'f8d120','efefef'])
 #axes.prop_cycle: cycler('color', ['5F18E2', '189CE2', 'E2189C', 'E5E5E5', '18E25C'])
 #axes.prop_cycle: cycler('color', ['9C72E5', '72BBE5', 'E572BB', 'E5E5E5', '72E59A'])
 axes.titlesize: 7
@@ -56,7 +56,7 @@ legend.scatterpoints: 1
 legend.framealpha: 1
 legend.fancybox: True 
 
-lines.linewidth: 0.5
+lines.linewidth: 0.75
 lines.markeredgewidth: 0.25
 lines.marker          : None
 lines.markersize: 2
