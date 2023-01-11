@@ -14,6 +14,8 @@ We run our Research Bites series and disseminate our findings via notebooks. You
 
 They are located at: `_research_bites/<date>/ResearchBites-<date>-<title>.ipynb`.
 
+We provide tutorials as well to ensure the fullest participation from the community. Please locate those under `_research_bites/tutorials/*.ipynb`.
+
 ## More on Panoptic
 
 Panoptic is a governance-minimized options trading protocol. It enables the permissionless trading of perpetual options on top of any asset pool in the [Uniswap v3 ecosystem](https://uniswap.org/).
