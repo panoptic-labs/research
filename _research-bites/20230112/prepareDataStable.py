@@ -26,6 +26,13 @@ pools
 
 stable=[]
 
+def get_twos_comp(hex_str, bits: int=256):
+    """Calculate two's complement"""
+    num = int(hex_str, 16)
+    if (num & (1 << (bits - 1))) != 0: # Check if first bit is set
+        num = num - (1 << bits)        # Get two's complement
+    return num
+
 def dataDownload(poolAddress:str,filePath:str,all=True):
     
     filepath=filePath+poolAddress+'.csv'
@@ -42,10 +49,10 @@ def dataDownload(poolAddress:str,filePath:str,all=True):
 def getAvgPrice(df,start,name,window):
 
     df=df[df['time']>start]
-    df=df.resample(window, on='time')['price'].pad()
-    df = df.interpolate(limit_direction='backward')
-
-    df=df.dropna()
+    df=df.set_index('time')
+    df=df.resample(window).mean()
+    df=df.interpolate(method='time')['price']
+    
     df=df.rename(name)
     return df
 
@@ -110,19 +117,21 @@ def getPoolInfo(poolID:str,start,dataDir='../../.data/',window='1H'):
     
     #token1 is the numeraire
     
+
+
+    df['amount0']=df['amount0'].apply(get_twos_comp)/ (10 ** token0Decimals)
+    df['amount1']=df['amount1'].apply(get_twos_comp)/ (10 ** token1Decimals)
+    
+    res['df']=df
+    #res['price']= getAvgPrice(df,start,res['name'],window)
     
     if res['token1']=='USDC':
     
         df['price'] = 1.0001**df['tick']*10**(token0Decimals-token1Decimals)
+        df['flow']=df['amount1'].apply(lambda x: np.abs(x))
     else:
         df['price'] = 1/(1.0001**df['tick']*10**(token0Decimals-token1Decimals))
-    
-    
-    import pdb
-    pdb.set_trace()
-    
-    res['price']= getAvgPrice(df,start,res['name'],window)
-
+        df['flow']=df['amount0'].apply(lambda x: np.abs(x))
 
     
     return res
@@ -150,10 +159,10 @@ for i in range(len(pools)):
     print('building info for '+n+'...')
     aux=getPoolInfo(p, start=START)
     results.append(aux)
-    dfs.append(aux['price'])
+    #dfs.append(aux['price'])
 
 
-merged=mergeDf(dfs)
+#merged=mergeDf(dfs)
 #%%
 plt.style.use('../../stylesheet/panoptic-dark-16:9.mplstyle')
 merged.plot()
