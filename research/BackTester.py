@@ -188,21 +188,13 @@ class BackTester(object):
 
     def positionValue(self, atTick=None):
 
-        ### TODO: WHAT IS THIS - GET VALUE OF A POSITION
         ### 
-        startLiq = lambda t, tL : 1/(sqrt(1.0001**t)-sqrt(1.0001**tL)) # WHAT IS THIS EQ? WHY START LIQ?   1 / (sqrt(price) - sqrt(priceL))
-
+        startLiq = lambda t, tL : 1/(sqrt(1.0001**t)-sqrt(1.0001**tL))
         
         # So we just pick start1 (token1) to be 1? Then what is token0:
         start0 = lambda t, tL, tH :  startLiq(t, tL)*(1/sqrt(1.0001**t) - 1/sqrt(1.0001**tH))
         start1 = 1
 
-        # this is just the conditional on token0 saying:
-        # the value to it comes from 3 cases: "t <= tL": ...
-        # t is in between, and t > tH --- SEE the uniswap options book from Peter
-        # this simply gives the value of token0 at some tick t
-        # same with token1 - check as well
-        
         end0 = lambda t, tL, tH, dL : (t<= tL)*dL * (1/sqrt(1.0001**tL) - 1/sqrt(1.0001**tH)) + (t > tL)*(t<tH)*dL * (1/sqrt(1.0001**t) - 1/sqrt(1.0001**tH)) + (t>=tH)*0
         end1 = lambda t, tL, tH, dL : (t<=tL)*0 + (t>tL)*(t<tH)*dL * (sqrt(1.0001**t) - sqrt(1.0001**tL))+(t>=tH)*dL * (sqrt(1.0001**tH) - sqrt(1.0001**tL))
 
