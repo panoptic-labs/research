@@ -22,7 +22,7 @@ def get_twos_comp(hex_str, bits: int=256):
         num = num - (1 << bits)        # Get two's complement
     return num
 
-def dataDownload(poolAddress:str,filePath:str,all=True):
+def dataDownload(poolAddress:str,filePath:str,all=True,gbqTable:str):
     
     filename=filePath+poolAddress+'.csv'
     if os.path.isfile(filename):
@@ -31,7 +31,7 @@ def dataDownload(poolAddress:str,filePath:str,all=True):
     else:
         os.system('mkdir '+str(filePath))
         print('Downloading csv file...')
-        df = pd.read_gbq(f"SELECT * FROM `arcane-world-371019.First_sync.1` WHERE address=lower('{poolAddress}') {'' if all else 'LIMIT 1000'}", project_id="arcane-world-371019", progress_bar_type='tqdm')
+        df = pd.read_gbq(f"SELECT * FROM '{gbqTable}' WHERE address=lower('{poolAddress}') {'' if all else 'LIMIT 1000'}", project_id="arcane-world-371019", progress_bar_type='tqdm')
         df.to_csv(filename, index=False)
         print(f"✍ Data written to: {filename}")
         return
