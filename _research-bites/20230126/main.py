@@ -1,90 +1,128 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Sun Feb  5 09:11:09 2023
+Created on Tue Jan 24 07:44:15 2023
 
 @author: juan
 """
+"""
+Created on Tue Jan 24 07:44:15 2023
 
-from pools import getPoolsOneHour
-import pandas as pd
-import os
-import glob
+@author: juan
+"""
 import numpy as np
-import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
-import seaborn as sns
-
+import pandas
+import tqdm
+from google.cloud import bigquery
+from google.oauth2 import service_account
+import matplotlib.dates as mdates
+from getGasData import getGasData
+import matplotlib.dates as mdates
 plt.style.use('../../stylesheet/panoptic-dark-16:9.mplstyle')
-#%% Downloads pools 
-START='2021-06-01'
-getPoolsOneHour(start=START)    
 
 
-
-#%% Here we create a dataframe with the hourly data in USDC
-
+# gets and cleans gas dataset
 
 
-# use glob to get all the csv files 
-# in the folder
-path = './Data/'
-files = glob.glob(os.path.join(path, "*.csv"))
+gas=getGasData()
+gas['timestamp']= pandas.to_datetime(gas['timestamp'], utc=True)
+gas['dt']=gas['timestamp'].diff()/ np.timedelta64(1, 's')
+gas=gas.sort_values(by='number')
+EIP_BLOCK=12965000
+MERGE_BLOCK=15537393
+pre=gas[gas['number']>EIP_BLOCK]
+pre=pre[pre['number']<MERGE_BLOCK]
+merge=gas[gas['number']>MERGE_BLOCK]
 
-dfs=[]
-
-for f in files:
-    aux=pd.read_csv(f)
-    aux=aux.set_index('Date')
-    
-    #aux=aux.rename(f[7:-5])
-    dfs.append(aux)
-  
-data=pd.DataFrame(dfs[0])
-
-for i in range(1,len(dfs)):
-    data=pd.concat([data,dfs[i]],axis=1)
-
-data=data.dropna()
-
-usdc_price=1/(data['USDC-WETH-0.3%'].values)
-
-for c in data.columns:
-    data[c]=data[c]*usdc_price
-
-
-data['USDC-WETH-0.3%']=usdc_price
-
-
-#%% Here we compute the log returns 
-lr=np.log(data/data.shift(1)).dropna()
-time=pd.to_datetime(lr.index).values
-lr.columns=['LDO', 'UNI', 'oSQTH', 'WBTC',
-       'APE', 'MATIC', 'SHIB', 'USDC',
-       'sETH2']
-for c in lr.columns:
-    plt.hist(lr[c],bins=40,histtype='step',label=c)
-plt.xlim([-0.5,0.5])
+gas['regime']=['pre-merge']*len(gas)
+indx=gas[gas['number']>MERGE_BLOCK].index
+gas['regime'].loc[indx]='post-merge'
+#%%
+#plots histograms
+plt.hist(pre['gas_used'], density=True,alpha=0.7,label='EIP1559, pre-merge',bins=100)
+plt.hist(merge['gas_used'], density=True,alpha=0.7,label='EIP1559, post-merge',bins=100)
+plt.vlines(x=1.5e7,ymin=0,ymax=4.25e-7,label='Target block size',color='C2')
+plt.xlabel('Gas used (gas units)')
+plt.ylabel('Density')
 plt.legend()
+plt.title('Gas usage in the Ethereum network')
+plt.ylim([0,1e-7])
+plt.show()
+#%%
+
+#describes datasets
+print('description, pre merge')
+print(pre.describe())
+
+print('description, post merge')
+print(merge.describe())
+
+#%%
+#plots base fees
+
+for aux,l in zip([pre,merge],['EIP1559, pre-merge','EIP1559, post-merge']):
+    aux=aux['base_fee_per_gas']
+    aux = aux[aux.between(aux.quantile(.01), aux.quantile(.99))] 
+    plt.hist(np.log10(aux*10**-18), density=True,alpha=0.7,label=l,bins=100)
+
+plt.xlabel('Log (Base Fee) (ETH per gas unit)')
+plt.ylabel('Density')
+plt.legend()
+#plt.xscale('log')
+plt.title(r'Log(Base fee) in the Ethereum network ($\log_{10}$-scale)')
 plt.show()
 
-volUSDC=lr['USDC'].std()
-vols=lr.std()
+#%%
+props = dict(boxstyle='round')
+#plots gas burn
 
-betas={}
-
-for c in lr.columns:
+names=['EIP1559, pre-merge','EIP1559, post-merge']
+mus=[]
+ss=[]
+for aux,l in zip([pre,merge],names):
+    aux['burn']=aux['base_fee_per_gas']*gas['gas_used']*10**-18
+    aux=aux['burn']
+    aux = aux[aux.between(aux.quantile(.01), aux.quantile(.99))] 
+    plt.hist(aux, density=True,alpha=0.7,label=l,bins=100)
+    plt.xlabel('Burnt tokens (ETH)')
+    plt.ylabel('Density')
+    plt.legend()
+    plt.xlim([0,3])
     
-    voli=lr[c].std()
-    rho=np.corrcoef(lr[c].values,lr['USDC'].values)
-    betas[c]=round(rho[0,1]*voli/volUSDC,3)
+    mus.append(round(aux.mean(),3))
+    ss.append(round(aux.std(),3))
     
-#%% Plot the results
+    
 
-lr=lr.drop(columns='USDC')
-sns.heatmap(lr.corr(),annot=True,annot_kws={"size":5})
-sns.set(font_scale=0.75)
-plt.title('Price correlation matrix')
+textstr = '\n'.join((
+r'$\mu_{pre}=%.2f$' % (mus[0] ),
+r'$\sigma_{pre}=%.2f$' % (ss[0] ),
+r'$\mu_{post}=%.2f$' % (mus[1] ),
+r'$\sigma_{post}=%.2f$' % (ss[1] ))
+)        
+
+plt.text(1., 3, textstr, fontsize=6,
+verticalalignment='top', bbox=props)
 
 
+plt.title(r'EIP1559 burning in the Ethereum network')
+plt.show()
 
+#%%
+#plots time between blocks
+
+for aux,l in zip([pre,merge],['EIP1559, pre-merge','EIP1559, post-merge']):
+    plt.hist(aux['dt'], density=True,alpha=0.7,label=l,bins=100)
+plt.xlabel('Time (s)')
+plt.ylabel('Density')
+plt.title(r'Time between blocks')
+plt.ylim([0,0.1])
+plt.xlim([0,70])
+xx=np.linspace(0,70,100)
+lam=1/(merge['dt'].dropna().mean())
+plt.plot(xx, lam*np.exp(-lam *xx), label='Exp. Distr, $\lambda=$'+str(round(lam,2)))
+plt.legend()
+plt.xlim([0,50])
+plt.xticks([0, 12, 24, 36, 48])
+plt.show()
