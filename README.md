@@ -125,6 +125,7 @@ To run code, e.g., to sync data:
 
 ### License
 
-Copyright © 2023, Axicon Labs Inc.
+Created by Axicon Labs Inc.
 
-This repository "https://github.com/panoptic-labs/research" is licensed under the MIT license.
+This repository "https://github.com/panoptic-labs/research" (the "Repo") is licensed under the MIT license.
+You are free to use, build upon, and distribute this Repo.
