@@ -119,9 +119,10 @@ To run code, e.g., to sync data:
 
 **Axicon Labs Inc.**
 
-* [website/Panoptic.xyz](https://www.panoptic.xyz/)
-* [twitter/Panoptic_xyz](https://twitter.com/Panoptic_xyz)
-* [discord/Panoptic](https://discord.com/invite/7fE8SN9pRT)
+* [website](https://www.panoptic.xyz/)
+* [twitter](https://twitter.com/Panoptic_xyz)
+* [discord](https://discord.com/invite/7fE8SN9pRT)
+* [blog](https://blog.panoptic.xyz/)
 
 ### License
 
