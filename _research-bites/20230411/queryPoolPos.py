@@ -144,16 +144,7 @@ def getPoolInfoAndPositions(pool_id:str):
 
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    plt.style.use('panoptic-dark-16_9.mplstyle')
+    plt.style.use('../../stylesheet/panoptic-dark-16_9.mplstyle')
     
     
     POOL_LIST=['0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640',
@@ -161,25 +152,15 @@ if __name__ == "__main__":
                 '0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8',
                 #'0x5777d92f208679db4b9778590fa3cab3ac9e2168',
                 '0x4585fe77225b41b697c938b018e2ac67ac5a20c0',
-                #'0x3416cf6c708da44db2624d63ea0aaef7113527c6',
+                '0x3416cf6c708da44db2624d63ea0aaef7113527c6',
                 '0x7379e81228514a1d2a6cf7559203998e20598346',
                 '0x4e68ccd3e89f51c3074ca5072bbac773960dfa36']
+    cc=0
     pool_data=[]
-    names=['USDC-5bps', 
-    'WBTC-30bps', 
-    'USDC-30bps',
-    'WBTC-5bps', 
-    'sETH2-30bps', 
-    'USDT-30bps']
     for p in POOL_LIST:
         pool_data.append(getPoolInfoAndPositions(p))
-#%%
-    cc=0
-
-    for p in range(len(POOL_LIST)):
-    
-        dfg=pool_data[p]['positions'].groupby(by='owner')['prop'].sum()
-        dfg2=pool_data[p]['positions'].groupby(by='owner')['totalLiq'].sum()
+        dfg=pool_data[-1]['positions'].groupby(by='owner')['prop'].sum()
+        dfg2=pool_data[-1]['positions'].groupby(by='owner')['totalLiq'].sum()
 
         N=len(dfg)
         prop_owners=np.arange(1,N+1)/N
@@ -190,12 +171,12 @@ if __name__ == "__main__":
             ls='solid'
         else:
             ls='dashed'
-        plt.plot(prop_owners*100,np.cumsum(dfg)*100, linestyle=ls, label=names[cc])
-        plt.title('Percentage of Liquidity Vs Owners')
-        plt.ylabel('Percentage of Liquidity')
-        plt.xlabel('Percentage of Owners')
-        plt.xlim([0,20])
-        plt.ylim([0,100])
+        plt.plot(prop_owners,np.cumsum(dfg), linestyle=ls, label=pool_data[-1]['name'])
+        plt.title('Proportion of Liquidity Vs Owners')
+        plt.ylabel('Proportion of Liquidity')
+        plt.xlabel('Proportion of Owners')
+        plt.xlim([0,0.2])
+        plt.ylim([0,1])
         plt.legend()
         cc+=1
     plt.show()
@@ -217,7 +198,7 @@ if __name__ == "__main__":
         else:
             ls='dashed'
 
-        plt.semilogy(owners,np.cumsum(dfg2), linestyle=ls, label=names[cc])
+        plt.semilogy(owners,np.cumsum(dfg2), linestyle=ls, label=pool_data[p]['name'])
         plt.title('Cumulative Liquidity Vs Owners')
         plt.ylabel('Total Liquidity (USD)')
         plt.xlabel('Owner Rank')
@@ -244,9 +225,9 @@ if __name__ == "__main__":
             ls='solid'
         else:
             ls='dashed'
-        plt.semilogy(owners,dfg2, linestyle=ls, label=names[cc])
+        plt.semilogy(owners,dfg2, linestyle=ls, label=pool_data[p]['name'])
         plt.title('Liquidity Vs Owners')
-        plt.ylabel('Liquidity per owner (USD)')
+        plt.ylabel('Liquidity (USD)')
         plt.xlabel('Owner rank')
         plt.yticks([1e0,1e2,1e4,1e6,1e8,1e10])
         plt.ylim(1e-1,1e10)
@@ -257,39 +238,16 @@ if __name__ == "__main__":
         cc+=1
 #%%
 pm=[]
-names=['USDC-5bps', 
-'WBTC-30bps', 
-'USDC-30bps',
-'WBTC-5bps', 
-'sETH2-30bps', 
-'USDT-30bps']
-ii=0
-
-def gini(x):
-    total = 0
-    for i in range(len(x)):
-        for j in range(len(x)):
-            total += np.sum(np.abs(x[i] - x[j]))
-    return total / (2* len(x)**2 * np.mean(x))
 
 for p in pool_data:
     
     pos=p['positions'].groupby(by='owner')['totalLiq'].sum()
-    pos.sort_values()
-    G=gini(pos.values)
-    pm.append({'pos':pos.max()/pos.sum()*100, 
-               'name':names[ii]
+    
+    pm.append({'pos':pos.max()/pos.sum(), 
+               'name':p['name']
                })
-    print('  {}, {}M. Gini {}'.format(names[ii], round(pos.max()/1e6,2), round(G,3)))
-    ii+=1
-aux=pd.DataFrame(pm)
-aux.plot.bar(x='name',y='pos',rot=15)
-plt.legend('%')
-plt.xlabel('Pool ')
-plt.ylabel('% Controlled ')
-plt.title('Percentage Controlled by Largest LP for Different Pools')
+    print('  {}, {}M'.format(p['name'], round(pos.max()/1e6,2)))
 
-#%%
-#define function to calculate Gini coefficient
+aux=pd.DataFrame(pm)
 
     
