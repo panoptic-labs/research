@@ -144,7 +144,7 @@ def getPoolInfoAndPositions(pool_id:str):
 
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
-    plt.style.use('../../stylesheet/panoptic-dark-16_9.mplstyle')
+    plt.style.use('panoptic-dark-16_9.mplstyle')
     
     
     POOL_LIST=['0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640',
@@ -237,17 +237,10 @@ if __name__ == "__main__":
         
         cc+=1
 #%%
-pm=[]
-
 for p in pool_data:
     
-    pos=p['positions'].groupby(by='owner')['totalLiq'].sum()
     
-    pm.append({'pos':pos.max()/pos.sum(), 
-               'name':p['name']
-               })
-    print('  {}, {}M'.format(p['name'], round(pos.max()/1e6,2)))
-
-aux=pd.DataFrame(pm)
-
+    
+    print('  {},  {}M TVL, {} LPs, TVL-to-LP'.format(p['name'], round(np.sum(p['positions'].groupby(by='owner')['totalLiq'].sum())/1e6,2)
+    ,len(p['positions'].groupby(by='owner')['prop'].sum())))
     
