@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from computeQuantities import computeQuantities
-from plotResults import plotComparisson,find_r
+from plotResults import plotComparisson
 
 #%%
 pools = ["0xa6Cc3C2531FdaA6Ae1A3CA84c2855806728693e8",
@@ -47,6 +47,4 @@ for pool_id in pools:
     print(f'done with {name}')
 #%%    
 
-print('plotting...')
-find_r(dfs,names)
     

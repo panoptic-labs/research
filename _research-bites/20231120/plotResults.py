@@ -110,44 +110,32 @@ def plotComparisson(df,name,truncation=None):
     plt.show()
 
     # computes CDF
-    a=df['ratio']
-    a=a.sort_values()
-    cdf=100*np.arange(1,len(a)+1)/len(a)
+    tr=np.linspace(1,11,100)
+    aux=0*tr
     
+    
+    for i in range(len(tr)):
+        aux[i]=100*np.sum(tr[i]*df['total_fees_usd']>df['adj_premia'])/len(df)
+    
+            
     plt.figure(figsize=(6,3))
-    plt.plot(a,cdf)
+    plt.plot(tr,aux)
     
     title_fontsize = 16  # Larger font size for titles
     label_fontsize = 12  # Larger font size for axis labels
-    plt.xlabel('ratio (BSM/SFPM)', fontsize=label_fontsize)
+    plt.xlabel(r'Liquidity utilization factor, $\ell$', fontsize=label_fontsize)
     plt.title(f'{name}', fontsize=title_fontsize)
-    plt.ylabel('% Positions Below Ratio', fontsize=label_fontsize)
+    plt.ylabel('% Positions SFPM>BSM', fontsize=label_fontsize)
     plt.xlim([0,9])
     
+    name_save=f'{name}_lut'
+    if truncation is not None:
+        name_save+='truncated'
+        name= name+f', r<{truncation}'
+    plt.savefig(f'{name_save}.png')
+    
 
-    
-def find_r(dfs,names): 
-    tr=np.linspace(1.01,2,100)
-    j=0
-    
-    for df in dfs:
-        
-        per=0*tr
-        
-        for i in range(len(tr)):
-            r=tr[i]
-            aux=df[df['r']<r]
-            aux2=aux[aux['total_fees_usd']>aux['adj_premia']]
-            per[i]=100*len(aux2)/(len(aux)+1e-10)
-        title_fontsize = 16  # Larger font size for titles
-        label_fontsize = 12  # Larger font size for axis labels
-    
-        plt.plot(tr,per, label=names[j])
-    
-        j+=1
-    plt.legend()
-    plt.xlabel('r', fontsize=label_fontsize)
-    plt.ylabel('% SFPM >BSM', fontsize=label_fontsize)   
+
 
     
     
