@@ -40,7 +40,28 @@ Panoptic has been presented at conferences and was created before the Summer of 
 
 After introducing Panoptic and providing context, it is time to provide Panoptic's take-home test for evaluating Solidity engineers:
 
-# Panoptic Research Setup
+# Panoptic Research Docker Setup
+
+Be sure you are in root folder.
+
+1. Build your image:
+```shell
+docker build -t panoptic-research .
+```
+
+2. Run the container, publishing Jupyter’s default port to your host:
+```shell
+docker run -it --rm -p 8888:8888 panoptic-research
+```
+
+3. In the logs, you’ll see a URL like:
+Or copy/paste this URL into your browser when you connect:
+```shell
+http://127.0.0.1:8888/lab?token=<RANDOM_TOKEN>
+```
+Open that in your host browser, and you’ll see Jupyter Lab with your notebooks in /app.
+
+# Panoptic Research Locally Setup
 
 ## Virtual Environment
 
